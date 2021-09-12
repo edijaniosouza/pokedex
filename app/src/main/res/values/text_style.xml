@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="appbar_textStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/montserrat</item>
+    </style>
+</resources>
