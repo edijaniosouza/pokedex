@@ -9,12 +9,10 @@ class RetroftInstance {
 
     private val pokeApiUrl = "https://pokeapi.co/api/v2/"
 
-    fun gson () : Gson = GsonBuilder().create()
-
     private fun retrofit(): Retrofit = Retrofit
         .Builder()
         .baseUrl(pokeApiUrl)
-        .addConverterFactory(GsonConverterFactory.create(gson()))
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 
 

@@ -13,9 +13,38 @@
     <color name="gray_dropShadow">#0D0D0D</color>
     <color name="orange_fire">#F6953C</color>
     <color name="purple">#9A85EA</color>
+    <color name="green">#3B933F</color>
+    <color name="blue">#32A4C5</color>
+    <color name="lightGray">#AAAA9E</color>
+    <color name="lightGreen">#B8F49A</color>
+    <color name="yellow">#F3FFF636</color>
+    <color name="darkYellow">#F3ACA401</color>
+    <color name="pink">#F3E44196</color>
+    <color name="brown">#7A560C</color>
+    <color name="darkPurple">#643188</color>
+    <color name="darkBlue">#361B93</color>
+    <color name="darkBrown">#53310C</color>
+    <color name="gray">#7E7E7E</color>
+    <color name="lightPink">#FCAEFF</color>
 
     <array name="pokemon_color_types">
         <item name="fire">@color/orange_fire</item>
         <item name="flying">@color/purple</item>
+        <item name="grass">@color/green</item>
+        <item name="water">@color/blue</item>
+        <item name="normal">@color/lightGray</item>
+        <item name="bug">@color/lightGreen</item>
+        <item name="poison">@color/purple_500</item>
+        <item name="eletric">@color/yellow</item>
+        <item name="ground">@color/darkYellow</item>
+        <item name="fighting">@color/red</item>
+        <item name="psychic">@color/pink</item>
+        <item name="rock">@color/brown</item>
+        <item name="ice">@color/teal_700</item>
+        <item name="ghost">@color/darkPurple</item>
+        <item name="dragon">@color/darkBlue</item>
+        <item name="dark">@color/darkBrown</item>
+        <item name="steel">@color/gray</item>
+        <item name="fairy">@color/lightPink</item>
     </array>
 </resources>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -25,7 +25,6 @@
             app:titleTextColor="@color/white"
             style="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
             app:titleCentered="true"
-            app:menu="@menu/main"
             android:layout_marginBottom="3dp"
             android:elevation="2dp"
            />

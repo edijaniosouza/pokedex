@@ -8,7 +8,9 @@
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/background_border.xml" value="0.2942708333333333" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/background_card.xml" value="0.2942708333333333" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/background_pokemon_type.xml" value="0.2942708333333333" />
+        <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/background_pokemon_type2.xml" value="0.1265625" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/ic__filter.xml" value="0.2942708333333333" />
+        <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.2942708333333333" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/ic_baseline_filter_alt_24.xml" value="0.2942708333333333" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/ic_baseline_search.xml" value="0.2942708333333333" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2942708333333333" />
@@ -16,7 +18,8 @@
         <entry key="..\:/DEV/Pokedex/app/src/main/res/font/montserrat.xml" value="0.3035897435897436" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/layout-v28/activity_main.xml" value="0.278125" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/DEV/Pokedex/app/src/main/res/layout/card_pokemon.xml" value="0.67" />
+        <entry key="..\:/DEV/Pokedex/app/src/main/res/layout/activity_pokemon_details.xml" value="0.33" />
+        <entry key="..\:/DEV/Pokedex/app/src/main/res/layout/card_pokemon.xml" value="0.5" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/menu/main.xml" value="0.67" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.16197916666666667" />
         <entry key="..\:/DEV/Pokedex/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.16197916666666667" />

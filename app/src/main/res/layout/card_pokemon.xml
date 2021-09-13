@@ -43,48 +43,50 @@
             />
 
         <TextView
+            android:id="@+id/tv_pokemonID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="#006"
             android:fontFamily="@font/montserrat"
             app:layout_constraintTop_toBottomOf="@+id/pokemon_name"
             app:layout_constraintEnd_toEndOf="@id/pokemon_name"
-            android:textSize="8dp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/pokemon_type1"
-            android:layout_width="70dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="@id/pokemon_image"
             app:layout_constraintBottom_toBottomOf="@id/pokemon_image"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="FOGO"
+            app:layout_constraintStart_toEndOf="@+id/pokemon_name"
+            tools:text="ELETRIC"
             android:padding="2dp"
             android:textAlignment="center"
             android:fontFamily="@font/montserrat"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:background="@drawable/background_pokemon_type"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             />
 
         <TextView
             android:id="@+id/pokemon_type2"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/pokemon_type1"
-            app:layout_constraintStart_toStartOf="@id/pokemon_type1"
-            app:layout_constraintEnd_toEndOf="@id/pokemon_type1"
-            tools:text="VOADOR"
-            android:padding="2dp"
+            android:layout_width="100dp"
+            android:layout_height="19dp"
             android:layout_marginTop="2dp"
-            android:textAlignment="center"
-            android:fontFamily="@font/montserrat"
-            android:textColor="@color/white"
-            android:textStyle="bold"
             android:background="@drawable/background_pokemon_type"
-            />
+            android:backgroundTint="@color/orange_fire"
+            android:fontFamily="@font/montserrat"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
+            android:layout_marginBottom="15dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/pokemon_type1"
+            app:layout_constraintStart_toStartOf="@id/pokemon_type1"
+            app:layout_constraintTop_toBottomOf="@id/pokemon_type1"
+            tools:text="VOADOR" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
