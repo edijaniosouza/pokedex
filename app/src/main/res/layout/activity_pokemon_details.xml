@@ -17,7 +17,7 @@
         >
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/materialAppBar"
+            android:id="@+id/mab_pokemonDetails"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             tools:title="CHARIZARD"
@@ -28,6 +28,7 @@
             app:titleCentered="true"
             android:layout_marginBottom="3dp"
             android:elevation="2dp"
+            app:menu="@menu/pokemon_details"
             />
 
     </com.google.android.material.appbar.AppBarLayout>

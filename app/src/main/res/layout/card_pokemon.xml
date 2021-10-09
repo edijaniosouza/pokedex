@@ -22,7 +22,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             tools:src="@drawable/charizard"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/pokemon_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Charizard"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"
             />
@@ -59,7 +59,6 @@
             app:layout_constraintTop_toTopOf="@id/pokemon_image"
             app:layout_constraintBottom_toBottomOf="@id/pokemon_image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/pokemon_name"
             tools:text="ELETRIC"
             android:padding="2dp"
             android:textAlignment="center"
@@ -68,6 +67,7 @@
             android:textStyle="bold"
             android:background="@drawable/background_pokemon_type"
             android:layout_marginBottom="20dp"
+            android:layout_marginEnd="10dp"
             />
 
         <TextView

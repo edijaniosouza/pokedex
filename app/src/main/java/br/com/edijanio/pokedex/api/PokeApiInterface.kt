@@ -11,7 +11,7 @@ import retrofit2.http.Query
 interface PokeApiInterface {
 
     @GET("pokemon")
-    fun getPokemon(@Query("offset") offset : Int, @Query("limit") limit : Int = 100) : Call<PokemonModel>
+    fun getPokemon(@Query("offset") offset : Int, @Query("limit") limit : Int = 20) : Call<PokemonModel>
 
     @GET("pokemon/{id}")
     fun getPokemonByIdOrName(@Path("id") id : String ) : Call<PokemonInfoModel>

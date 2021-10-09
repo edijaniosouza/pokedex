@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Pokédex</string>
-    <string name="search">Search</string>
     <string name="filter">Filter</string>
+    <string name="search">Search</string>
+    <string name="favorite">favorite</string>
+    <string name="pokemon_image">Pokemon image</string>
+    <string name="pokemon_id">#%1$d</string>
 </resources>

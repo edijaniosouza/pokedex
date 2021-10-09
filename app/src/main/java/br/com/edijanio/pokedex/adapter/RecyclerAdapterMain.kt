@@ -15,18 +15,21 @@ import br.com.edijanio.pokedex.activities.PokemonDetails
 import br.com.edijanio.pokedex.model.pokemonInformation.PokemonInfoModel
 import br.com.edijanio.pokedex.util.changeTypeColor
 import com.squareup.picasso.Picasso
-import java.text.DecimalFormat
 
-class RecyclerAdapterMain(private val pokemonsList: MutableList<PokemonInfoModel>) : RecyclerView.Adapter<RecyclerAdapterMain.ViewHolder>() {
+class RecyclerAdapterMain(pokemonsInfo: MutableList<PokemonInfoModel>) : RecyclerView.Adapter<RecyclerAdapterMain.ViewHolder>() {
 
+    private val pokemonsList = pokemonsInfo
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.card_pokemon, parent, false)
         return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.pokemonId.text = "#${pokemonsList[position].id}"
+        val pokemonID = holder.itemView.context.getString(R.string.pokemon_id, pokemonsList[position].id)
+        holder.pokemonId.text = pokemonID
+
         holder.pokemonName.text = pokemonsList[position].name.uppercase()
+
         Picasso.get().load(pokemonsList[position].sprites.other.officialArtwork.front_default).into(holder.pokemonImage)
 
         val typeName = pokemonsList[position].types[0].type.name
@@ -55,20 +58,15 @@ class RecyclerAdapterMain(private val pokemonsList: MutableList<PokemonInfoModel
         return pokemonsList.size
     }
 
-    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
 
-        var pokemonId : TextView
-        var pokemonName : TextView
-        var pokemonImage : ImageView
-        var pokemonType :TextView
-        var pokemonType2 : TextView
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+        var pokemonId : TextView = itemView.findViewById(R.id.tv_pokemonID)
+        var pokemonName : TextView = itemView.findViewById(R.id.pokemon_name)
+        var pokemonImage : ImageView = itemView.findViewById(R.id.pokemon_image)
+        var pokemonType :TextView = itemView.findViewById(R.id.pokemon_type1)
+        var pokemonType2 : TextView = itemView.findViewById(R.id.pokemon_type2)
 
         init{
-            pokemonId = itemView.findViewById(R.id.tv_pokemonID)
-            pokemonName = itemView.findViewById(R.id.pokemon_name)
-            pokemonImage = itemView.findViewById(R.id.pokemon_image)
-            pokemonType = itemView.findViewById(R.id.pokemon_type1)
-            pokemonType2 = itemView.findViewById(R.id.pokemon_type2)
 
             itemView.setOnClickListener{
                 val position = adapterPosition
