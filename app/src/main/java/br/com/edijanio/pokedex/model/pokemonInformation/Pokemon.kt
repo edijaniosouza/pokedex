@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 
 @Parcelize
-data class PokemonInfoModel(
+data class Pokemon(
     val id : Int,
     val types : List<PokemonType>,
     val weight : Int,

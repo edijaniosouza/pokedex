@@ -1,79 +1,78 @@
 package br.com.edijanio.pokedex.adapter
 
-import android.content.Intent
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.edijanio.pokedex.R
-import br.com.edijanio.pokedex.activities.PokemonDetails
-import br.com.edijanio.pokedex.model.pokemonInformation.PokemonInfoModel
+import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 import br.com.edijanio.pokedex.util.changeTypeColor
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.card_pokemon.view.*
 
-class RecyclerAdapterMain(pokemonsInfo: MutableList<PokemonInfoModel>) : RecyclerView.Adapter<RecyclerAdapterMain.ViewHolder>() {
+class RecyclerAdapterMain(
+    private val context: Context,
+    private val pokemonsList: MutableList<Pokemon> = mutableListOf<Pokemon>(),
+    var onItemClicked: (Pokemon)-> Unit = {}
+) : RecyclerView.Adapter<RecyclerAdapterMain.ViewHolder>() {
 
-    private val pokemonsList = pokemonsInfo
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.card_pokemon, parent, false)
-        return ViewHolder(v)
+        val createdView = LayoutInflater.from(context)
+            .inflate(R.layout.card_pokemon, parent, false)
+        return ViewHolder(createdView)
     }
+
+    override fun getItemCount(): Int = pokemonsList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val pokemonID = holder.itemView.context.getString(R.string.pokemon_id, pokemonsList[position].id)
-        holder.pokemonId.text = pokemonID
-
-        holder.pokemonName.text = pokemonsList[position].name.uppercase()
-
-        Picasso.get().load(pokemonsList[position].sprites.other.officialArtwork.front_default).into(holder.pokemonImage)
-
-        val typeName = pokemonsList[position].types[0].type.name
-        holder.pokemonType.text = typeName.uppercase()
-
-        val unwrappedDrawable = holder.pokemonType.background
-        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
-        changeTypeColor(typeName, wrappedDrawable)
-
-        if(pokemonsList[position].types.size > 1){
-            holder.pokemonType2.visibility = VISIBLE
-            val typeName2 = pokemonsList[position].types[1].type.name
-            holder.pokemonType2.text = typeName2.uppercase()
-
-            val unwrappedDrawable2 = holder.pokemonType2.background
-            val wrappedDrawable2 = DrawableCompat.wrap(unwrappedDrawable2)
-            changeTypeColor(typeName2, wrappedDrawable2)
-
-        } else{
-            holder.pokemonType2.visibility = GONE
-        }
-
-    }
-
-    override fun getItemCount(): Int {
-        return pokemonsList.size
+        val pokemon = pokemonsList[position]
+        holder.linkPokemonDetails(pokemon)
     }
 
 
-    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
-        var pokemonId : TextView = itemView.findViewById(R.id.tv_pokemonID)
-        var pokemonName : TextView = itemView.findViewById(R.id.pokemon_name)
-        var pokemonImage : ImageView = itemView.findViewById(R.id.pokemon_image)
-        var pokemonType :TextView = itemView.findViewById(R.id.pokemon_type1)
-        var pokemonType2 : TextView = itemView.findViewById(R.id.pokemon_type2)
+    inner class ViewHolder(itemView : View) :
+        RecyclerView.ViewHolder(itemView){
+        lateinit var pokemon : Pokemon
 
         init{
-
             itemView.setOnClickListener{
-                val position = adapterPosition
 
-                val pokemonDetailsIntent = Intent(itemView.context, PokemonDetails::class.java)
-                pokemonDetailsIntent.putExtra("POKEMON_DETAILS", pokemonsList[position])
-                itemView.context.startActivity(pokemonDetailsIntent)
+                if(::pokemon.isInitialized){
+                    onItemClicked(pokemon)
+                }
+            }
+        }
+
+        fun linkPokemonDetails(
+            pokemon: Pokemon
+        ) {
+            itemView.tv_pokemonID.text = pokemon.id.toString()
+            itemView.pokemon_name.text = pokemon.name.uppercase()
+
+            Picasso.get().load(pokemon.sprites.other.officialArtwork.front_default)
+                .into(itemView.pokemon_image)
+
+            val typeName = pokemon.types[0].type.name
+            itemView.pokemon_type1.text = typeName.uppercase()
+            val unwrappedDrawable = itemView.pokemon_type1.background
+            val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+            changeTypeColor(typeName, wrappedDrawable)
+
+            if (pokemon.types.size > 1) {
+                itemView.pokemon_type2.visibility = VISIBLE
+                val typeName2 = pokemonsList[position].types[1].type.name
+                itemView.pokemon_type2.text = typeName2.uppercase()
+                val unwrappedDrawable2 = itemView.pokemon_type2.background
+                val wrappedDrawable2 = DrawableCompat.wrap(unwrappedDrawable2)
+                changeTypeColor(typeName2, wrappedDrawable2)
+
+            } else {
+                itemView.pokemon_type2.visibility = GONE
             }
         }
     }

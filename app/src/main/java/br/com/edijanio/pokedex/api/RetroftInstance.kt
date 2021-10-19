@@ -1,22 +1,35 @@
 package br.com.edijanio.pokedex.api
 
+import br.com.edijanio.pokedex.api.service.PokeApiService
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val POKEAPI_URL = "https://pokeapi.co/api/v2/"
+
 class RetroftInstance {
 
-    private val pokeApiUrl = "https://pokeapi.co/api/v2/"
+    private val client by lazy {
+        val logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BASIC
+        OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build();
+    }
 
-    private fun retrofit(): Retrofit = Retrofit
-        .Builder()
-        .baseUrl(pokeApiUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private val retrofit by lazy {
+        Retrofit
+            .Builder()
+            .baseUrl(POKEAPI_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+    }
 
-
-    fun api(): PokeApiInterface = retrofit().create(PokeApiInterface::class.java)
-
-
-
+    val pokeApiService: PokeApiService by lazy {
+        retrofit.create(PokeApiService::class.java)
+    }
 
 }
+

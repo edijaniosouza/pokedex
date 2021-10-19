@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.DrawableCompat
 
+const val POKEMON_CHAVE = "POKEMON_DETAILS"
 
 fun changeTypeColor(typeField : String, wrappedDrawable : Drawable){
     when(typeField){
