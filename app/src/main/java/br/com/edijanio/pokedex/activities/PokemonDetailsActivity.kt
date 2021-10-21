@@ -54,9 +54,12 @@ class PokemonDetailsActivity : AppCompatActivity() {
 
         val pokemon = viewModel.getPokemonById(id)
         pokemon.observe(this, {
-            setContent(it.data)
-            it.error.let {errorMessage ->
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            if(it.data != null){
+                setContent(it.data)
+            }
+            if(it.error != null){
+                //TODO: devolver erro para a main activity
+                finish()
             }
         })
     }

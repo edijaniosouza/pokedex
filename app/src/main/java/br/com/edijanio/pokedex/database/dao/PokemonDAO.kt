@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
-import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 
 @Dao
 interface PokemonDAO {

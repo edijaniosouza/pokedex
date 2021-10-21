@@ -14,15 +14,15 @@ import kotlinx.coroutines.withContext
 class PokemonDetailsActivityViewModel(
     private val repository: PokemonRepository
 ) : ViewModel() {
-    val liveData = MutableLiveData<Resource<PokemonEntity?>>()
+    private val pokemonLiveData = MutableLiveData<Resource<PokemonEntity?>>()
     fun getPokemonById(pokemonId: Int): LiveData<Resource<PokemonEntity?>>{
         viewModelScope.launch {
             val pokemon = repository.getPokemonById(pokemonId)
             withContext(Main){
-                liveData.value = pokemon.value
+                pokemonLiveData.value = pokemon.value
             }
         }
-        return liveData
+        return pokemonLiveData
     }
 
 }

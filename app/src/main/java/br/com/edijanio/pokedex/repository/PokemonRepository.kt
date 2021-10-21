@@ -1,76 +1,67 @@
 package br.com.edijanio.pokedex.repository
 
+import android.accounts.NetworkErrorException
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import br.com.edijanio.pokedex.api.webclient.PokemonWebClient
 import br.com.edijanio.pokedex.database.dao.PokemonDAO
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
+import kotlin.coroutines.coroutineContext
 
 class PokemonRepository(
     private val dao: PokemonDAO,
     private val webClient: PokemonWebClient = PokemonWebClient()
 ) {
-
-    private val pokemonsLiveData = MutableLiveData<Resource<List<PokemonEntity>?>>()
-
-    fun findAll(
+    private val liveData = MutableLiveData<List<PokemonEntity>?>()
+    suspend fun findAll(
         listSize: Int
-    ): LiveData<Resource<List<PokemonEntity>?>> {
-        val coroutineScopeIO = CoroutineScope(IO)
-        coroutineScopeIO.launch {
+    ): MutableLiveData<List<PokemonEntity>?> {
 
-            val result = dao.findAll()
-            withContext(Main) {
-                pokemonsLiveData.value = Resource(data = result)
-            }
-
-            //TODO: Fazer funcionar sem internet
-            findOnAPI(
-                listSize,
-                onFailure = {mensageError ->
-                    pokemonsLiveData.value = Resource(data = null, error = mensageError)
-                }
-            )
-
+        liveData.value = getAllPokemonsOnDatabase()
+        findOnAPI(listSize).apply {
+            liveData.value = getAllPokemonsOnDatabase()
         }
-        return pokemonsLiveData
+        return liveData
     }
+
+    private suspend fun getAllPokemonsOnDatabase() = dao.findAll()
 
     private suspend fun findOnAPI(
         quantidadeDePokemons: Int,
-        onFailure: (error: String) -> Unit
     ) {
         for (n in 1..quantidadeDePokemons) {
-            val pokemon = webClient.findPokemonById(id = n)
-            if (pokemon != null) {
-                internalSave(pokemon)
-                withContext(Main) {
-                    pokemonsLiveData.value = Resource(data = null)
+            try {
+                val pokemon = webClient.findPokemonById(n)
+                if (pokemon.isSuccessful) {
+                    internalSave(pokemon.body())
+                } else {
+                    Log.d("teste", "Erro na comunicação")
                 }
-            } else {
-                withContext(Main) {
-                    onFailure("\"Falha ao buscar pokemon\"")
-//                    pokemonsLiveData.value =
-//                        Resource(data = null, error = "Falha ao buscar pokemon")
-                }
+            }catch (e : UnknownHostException){
+                liveData.value = null
             }
-
         }
+
     }
 
     private suspend fun internalSave(
         pokemon: Pokemon?
     ) {
-        if (pokemon != null) {
-            createPokemonEntity(pokemon).also { pokemonEntity ->
-                dao.insert(pokemonEntity)
-            }
+        val convertedPokemon = pokemon?.let { createPokemonEntity(it) }
+        if (convertedPokemon != null) {
+            dao.insert(convertedPokemon)
         }
     }
 
@@ -79,16 +70,33 @@ class PokemonRepository(
     ): LiveData<Resource<PokemonEntity?>> {
         val liveDataSearch = MutableLiveData<Resource<PokemonEntity?>>()
 
-        val pokemonSearched = dao.findById(pokemonId)
-        if (pokemonSearched != null) liveDataSearch.value = Resource(data = pokemonSearched)
+        val pokemonSearched = getPokemonByIdOnDatabase(pokemonId)
+        if (pokemonSearched.value != null) liveDataSearch.value =
+            Resource(data = pokemonSearched.value)
         else {
             val pokemonWebSearched = webClient.findPokemonById(pokemonId)
-            if (pokemonWebSearched != null) {
-                val pokemonEntity = createPokemonEntity(pokemonWebSearched)
-                liveDataSearch.value = Resource(data = pokemonEntity)
+            val pokemonEntity = pokemonWebSearched.let {
+                it.body()?.let { it1 ->
+                    createPokemonEntity(
+                        it1
+                    )
+                }
             }
+            liveDataSearch.value = Resource(data = pokemonEntity)
+
         }
         return liveDataSearch
+    }
+
+    private suspend fun getPokemonByIdOnDatabase(pokemonId: Int): MutableLiveData<PokemonEntity?> {
+        val listLiveData = MutableLiveData<PokemonEntity?>()
+        val requestPokemon = dao.findById(pokemonId)
+        if (requestPokemon != null) {
+            listLiveData.value = requestPokemon
+        } else {
+            listLiveData.value = null
+        }
+        return listLiveData
     }
 
     private fun createPokemonEntity(pokemonWebSearched: Pokemon) =
@@ -98,6 +106,9 @@ class PokemonRepository(
             image = pokemonWebSearched.sprites.other.officialArtwork.front_default,
             name = pokemonWebSearched.name,
             type1 = pokemonWebSearched.types[0].type.name,
+            type2 = if (pokemonWebSearched.types.size > 1) {
+                pokemonWebSearched.types[1].type.name
+            } else null,
             weight = pokemonWebSearched.weight
         )
 
