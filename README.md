@@ -3,6 +3,4 @@
 Aplicativo desenvolvido para implementar os conhecimentos aprendidos.
 Utilizado Room para banco de dados interno e Retrofit para requisições da api externa (pokeapi)
 
-<img src="https://prnt.sc/1wzye3u" />
-<img src="https://prnt.sc/1wzyfpz" />
-
+![tela principal](https://user-images.githubusercontent.com/45483308/138348755-8d2bd72d-2f90-463f-96a0-1ae8ea362c3f.png)      ![pokemon-selecionado](https://user-images.githubusercontent.com/45483308/138348837-9b3e5cd5-ce71-4ad0-9d66-f0eff8d8a059.png)
