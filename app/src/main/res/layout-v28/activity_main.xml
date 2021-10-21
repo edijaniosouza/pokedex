@@ -7,26 +7,42 @@
     tools:context=".activities.PokemonListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/background_appbar"
-        android:outlineAmbientShadowColor="@color/black"
+        app:liftOnScroll="true"
         >
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/appBar"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/materialAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/app_name"
+            app:titleTextAppearance="@style/appbar_textStyle"
             app:titleTextColor="@color/white"
             style="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
             app:titleCentered="true"
+            android:layout_marginBottom="3dp"
+            android:elevation="2dp"
 
             />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleView_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBar"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/card_pokemon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

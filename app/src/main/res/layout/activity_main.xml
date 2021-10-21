@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,20 +17,6 @@
         android:background="@drawable/background_appbar"
         app:liftOnScroll="true"
         >
-
-        <!--<com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/materialAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
-            app:titleTextAppearance="@style/appbar_textStyle"
-            app:titleTextColor="@color/white"
-            style="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
-            app:titleCentered="true"
-            android:layout_marginBottom="3dp"
-            android:elevation="2dp"
-            app:menu="@menu/main"
-           />-->
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/materialAppBar"
@@ -49,7 +36,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPokemonList"
+        android:id="@+id/recycleView_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

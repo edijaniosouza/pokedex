@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.edijanio.pokedex.R
+import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 import br.com.edijanio.pokedex.util.changeTypeColor
 import com.squareup.picasso.Picasso
@@ -16,8 +17,8 @@ import kotlinx.android.synthetic.main.card_pokemon.view.*
 
 class RecyclerAdapterMain(
     private val context: Context,
-    private val pokemonsList: MutableList<Pokemon> = mutableListOf<Pokemon>(),
-    var onItemClicked: (Pokemon)-> Unit = {}
+    private val pokemonsList: MutableList<PokemonEntity> = mutableListOf<PokemonEntity>(),
+    var onItemClicked: (pokemon: PokemonEntity) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerAdapterMain.ViewHolder>() {
 
 
@@ -34,38 +35,45 @@ class RecyclerAdapterMain(
         holder.linkPokemonDetails(pokemon)
     }
 
+    fun update(data: List<PokemonEntity>) {
+        notifyItemRangeRemoved(0,pokemonsList.size)
+        this.pokemonsList.clear()
+        this.pokemonsList.addAll(data)
+        notifyItemRangeInserted(0,pokemonsList.size)
+    }
+
 
     inner class ViewHolder(itemView : View) :
         RecyclerView.ViewHolder(itemView){
-        lateinit var pokemon : Pokemon
+        private lateinit var pokemon : PokemonEntity
 
         init{
             itemView.setOnClickListener{
-
-                if(::pokemon.isInitialized){
+                if (::pokemon.isInitialized) {
                     onItemClicked(pokemon)
                 }
             }
         }
 
         fun linkPokemonDetails(
-            pokemon: Pokemon
+            pokemon: PokemonEntity
         ) {
+            this.pokemon =pokemon
             itemView.tv_pokemonID.text = pokemon.id.toString()
             itemView.pokemon_name.text = pokemon.name.uppercase()
 
-            Picasso.get().load(pokemon.sprites.other.officialArtwork.front_default)
+            Picasso.get().load(pokemon.image)
                 .into(itemView.pokemon_image)
 
-            val typeName = pokemon.types[0].type.name
+            val typeName = pokemon.type1
             itemView.pokemon_type1.text = typeName.uppercase()
             val unwrappedDrawable = itemView.pokemon_type1.background
             val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
             changeTypeColor(typeName, wrappedDrawable)
 
-            if (pokemon.types.size > 1) {
+            if (pokemon.type2 != null) {
                 itemView.pokemon_type2.visibility = VISIBLE
-                val typeName2 = pokemonsList[position].types[1].type.name
+                val typeName2 = pokemon.type2
                 itemView.pokemon_type2.text = typeName2.uppercase()
                 val unwrappedDrawable2 = itemView.pokemon_type2.background
                 val wrappedDrawable2 = DrawableCompat.wrap(unwrappedDrawable2)

@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Charizard"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"
             />
