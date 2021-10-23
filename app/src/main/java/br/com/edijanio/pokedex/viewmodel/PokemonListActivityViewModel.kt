@@ -21,4 +21,18 @@ class PokemonListActivityViewModel(
         }
         return pokemonsLiveData
     }
+
+    fun loadMorePokemons(pokemonId: Int): LiveData<Resource<PokemonEntity?>> {
+        val pokemonLiveData = MutableLiveData<Resource<PokemonEntity?>>()
+        viewModelScope.launch {
+            val pokemonResource = repository.getPokemonById(pokemonId).value
+            pokemonResource?.let {resource ->
+                pokemonLiveData.postValue(resource)
+                resource.data.let {pokemon->
+                    repository.insertPokemonOnDatabase(pokemon)
+                }
+            }
+        }
+        return pokemonLiveData
+    }
 }

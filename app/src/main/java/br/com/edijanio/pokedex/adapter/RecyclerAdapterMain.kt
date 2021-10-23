@@ -42,6 +42,15 @@ class RecyclerAdapterMain(
         notifyItemRangeInserted(0,pokemonsList.size)
     }
 
+    fun add(pokemon: PokemonEntity) {
+        val position = itemCount
+
+        if(!pokemonsList.contains(pokemon)){
+            pokemonsList.add(position, pokemon)
+            notifyItemInserted(position)
+        }
+    }
+
 
     inner class ViewHolder(itemView : View) :
         RecyclerView.ViewHolder(itemView){

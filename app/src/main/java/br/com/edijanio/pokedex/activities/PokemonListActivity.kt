@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import br.com.edijanio.pokedex.R
 import br.com.edijanio.pokedex.adapter.RecyclerAdapterMain
 import br.com.edijanio.pokedex.database.AppDatabase
@@ -46,6 +47,27 @@ class PokemonListActivity : AppCompatActivity() {
         setSupportActionBar(materialAppBar)
         recycleViewConfigurations()
         loadPokemons()
+
+        recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val lastItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                val listSize = adapter.itemCount
+
+                if(lastItem >= listSize-6){
+                    viewModel.loadMorePokemons(listSize+1).observe(this@PokemonListActivity, {resource ->
+                        resource?.data?.let {pokemon ->
+                            adapter.add(pokemon)
+                        }
+                        resource?.error?.let{
+                            Toast.makeText(this@PokemonListActivity, "Erro ao carregar pokemon",Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+
+            }
+        })
     }
 
     private fun recycleViewConfigurations() {
