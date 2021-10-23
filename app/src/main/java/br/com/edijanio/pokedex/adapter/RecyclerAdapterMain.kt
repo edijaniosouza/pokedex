@@ -59,9 +59,19 @@ class RecyclerAdapterMain(
             pokemon: PokemonEntity
         ) {
             this.pokemon =pokemon
-            itemView.tv_pokemonID.text = pokemon.id.toString()
+            when {
+                pokemon.id < 10 -> {
+                    "#00${pokemon.id}".also {
+                        itemView.tv_pokemonID.text = it }
+                }
+                pokemon.id < 100 -> {
+                    "#0${pokemon.id}".also { itemView.tv_pokemonID.text = it }
+                }
+                else -> {
+                    "#${pokemon.id}".also { itemView.tv_pokemonID.text = it }
+                }
+            }
             itemView.pokemon_name.text = pokemon.name.uppercase()
-
             Picasso.get().load(pokemon.image)
                 .into(itemView.pokemon_image)
 

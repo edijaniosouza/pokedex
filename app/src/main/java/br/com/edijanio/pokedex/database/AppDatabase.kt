@@ -12,7 +12,7 @@ import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 
 private const val DATABASE_NAME = "pokedex.db"
 
-@Database(entities = [PokemonEntity::class], version = 3, exportSchema = false)
+@Database(entities = [PokemonEntity::class], version = 4, exportSchema = false)
 @TypeConverters(PokemonTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 

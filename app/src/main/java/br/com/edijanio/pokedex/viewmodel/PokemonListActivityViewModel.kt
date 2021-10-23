@@ -17,7 +17,7 @@ class PokemonListActivityViewModel(
 
     fun findAll(): LiveData<Resource<List<PokemonEntity>?>> {
         viewModelScope.launch {
-            pokemonsLiveData.postValue(Resource(data = repository.findAll(20).value))
+            pokemonsLiveData.postValue(Resource(data = repository.findAll().value))
         }
         return pokemonsLiveData
     }

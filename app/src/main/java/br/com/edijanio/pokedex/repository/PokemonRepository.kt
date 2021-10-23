@@ -1,47 +1,40 @@
 package br.com.edijanio.pokedex.repository
 
-import android.accounts.NetworkErrorException
 import android.util.Log
-import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.Observer
 import br.com.edijanio.pokedex.api.webclient.PokemonWebClient
 import br.com.edijanio.pokedex.database.dao.PokemonDAO
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.UnknownHostException
-import kotlin.coroutines.coroutineContext
 
 class PokemonRepository(
     private val dao: PokemonDAO,
     private val webClient: PokemonWebClient = PokemonWebClient()
 ) {
     private val liveData = MutableLiveData<List<PokemonEntity>?>()
-    suspend fun findAll(
-        listSize: Int
-    ): MutableLiveData<List<PokemonEntity>?> {
 
-        liveData.value = getAllPokemonsOnDatabase()
-        findOnAPI(listSize).apply {
-            liveData.value = getAllPokemonsOnDatabase()
-        }
+    suspend fun findAll(): LiveData<List<PokemonEntity>?> {
+        getAllPokemonsOnDatabase().observeForever({
+            liveData.value = it
+        })
+        findOnAPI()
         return liveData
     }
 
-    private suspend fun getAllPokemonsOnDatabase() = dao.findAll()
+    private fun getAllPokemonsOnDatabase(): LiveData<List<PokemonEntity>?> = dao.findAll()
 
-    private suspend fun findOnAPI(
-        quantidadeDePokemons: Int,
-    ) {
-        for (n in 1..quantidadeDePokemons) {
+    private suspend fun findOnAPI() {
+        for (n in 1..20) {
             try {
                 val pokemon = webClient.findPokemonById(n)
                 if (pokemon.isSuccessful) {
@@ -49,8 +42,9 @@ class PokemonRepository(
                 } else {
                     Log.d("teste", "Erro na comunicação")
                 }
-            }catch (e : UnknownHostException){
-                liveData.value = null
+            } catch (e: UnknownHostException) {
+                Log.d("teste", "erro: $e")
+                // liveData.value = null
             }
         }
 
@@ -88,14 +82,10 @@ class PokemonRepository(
         return liveDataSearch
     }
 
-    private suspend fun getPokemonByIdOnDatabase(pokemonId: Int): MutableLiveData<PokemonEntity?> {
+    private fun getPokemonByIdOnDatabase(pokemonId: Int): MutableLiveData<PokemonEntity?> {
         val listLiveData = MutableLiveData<PokemonEntity?>()
         val requestPokemon = dao.findById(pokemonId)
-        if (requestPokemon != null) {
-            listLiveData.value = requestPokemon
-        } else {
-            listLiveData.value = null
-        }
+        listLiveData.value = requestPokemon.value
         return listLiveData
     }
 
