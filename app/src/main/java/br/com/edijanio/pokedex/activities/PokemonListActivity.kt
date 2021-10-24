@@ -115,8 +115,6 @@ class PokemonListActivity : AppCompatActivity() {
                 Toast.makeText(this, LOAD_ERROR, Toast.LENGTH_SHORT).show()
             }
         })
-
-
     }
 
 

@@ -29,3 +29,5 @@ fun changeTypeColor(typeField : String, wrappedDrawable : Drawable){
             else -> DrawableCompat.setTint(wrappedDrawable, Color.GRAY)
         }
     }
+
+

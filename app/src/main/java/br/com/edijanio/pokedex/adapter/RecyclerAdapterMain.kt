@@ -1,16 +1,20 @@
 package br.com.edijanio.pokedex.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.edijanio.pokedex.R
+import br.com.edijanio.pokedex.activities.PokemonDetailsActivity
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
+import br.com.edijanio.pokedex.util.POKEMON_CHAVE
 import br.com.edijanio.pokedex.util.changeTypeColor
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_pokemon.view.*
