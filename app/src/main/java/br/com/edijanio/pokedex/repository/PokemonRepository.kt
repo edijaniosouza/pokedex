@@ -7,6 +7,11 @@ import br.com.edijanio.pokedex.api.webclient.PokemonWebClient
 import br.com.edijanio.pokedex.database.dao.PokemonDAO
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.UnknownHostException
 
 const val COMMUNICATION_ERROR = "Erro na comunicação"
@@ -102,4 +107,36 @@ class PokemonRepository(
     }
 
     fun getFavoritesPokemons() = dao.findOnlyFavorites(true)
+
+    fun getPokemonByNameOrId(nameOrId: String?): MutableLiveData<List<PokemonEntity>?> {
+        val liveDataSearch = MutableLiveData<List<PokemonEntity>?>()
+        if (nameOrId != null) {
+            if (nameOrId.toIntOrNull() != null) {
+                dao.findById(nameOrId.toInt()).observeForever { pokemon ->
+                    liveDataSearch.value = listOf(pokemon)
+                }
+            } else {
+                dao.findByName(nameOrId).observeForever { pokemonList ->
+                    liveDataSearch.value = pokemonList
+                }
+            }
+            try {
+                CoroutineScope(IO).launch {
+                    val apiResponse = webClient.findPokemonByIdOrName(nameOrId)
+                    if (apiResponse.isSuccessful) {
+                        val createPokemonEntity = apiResponse.body()?.let { createPokemonEntity(it) }
+                        createPokemonEntity?.let {pokemonEntity ->
+                            withContext(Main){
+                                liveDataSearch.value = listOf(pokemonEntity)
+                            }
+                        }
+                    }
+                }
+            }catch (e: UnknownHostException){
+                //TODO: Implementar tratamento
+            }
+        }
+
+        return liveDataSearch
+    }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,10 @@ import br.com.edijanio.pokedex.util.POKEMON_CHAVE
 import br.com.edijanio.pokedex.viewmodel.PokemonListActivityViewModel
 import br.com.edijanio.pokedex.viewmodel.factory.PokemonListActivityViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.materialAppBar
+import kotlinx.android.synthetic.main.activity_main.recycleView_main
 import kotlinx.android.synthetic.main.activity_pokemon_details.*
+import kotlinx.android.synthetic.main.activity_pokemon_favorite_list.*
 
 const val LOAD_ERROR = "Erro ao carregar lista"
 
@@ -57,12 +61,61 @@ class PokemonListActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+                R.id.search_menu -> {
+                    searchEngine()
+                    true
+                }
                 else -> {
                     false
                 }
             }
         }
     }
+
+    private fun searchEngine() {
+        val searchView = materialAppBar.menu.findItem(R.id.search_menu).actionView as SearchView
+        searchView.queryHint = "Search for pokemon id or name"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.getOnPokemonByNameOrId(query).observe(this@PokemonListActivity, {pokemonList ->
+                    Log.d("teste","$pokemonList")
+                    pokemonList?.let {
+                        Log.d("teste","$it")
+                        adapter.update(it)
+                    }
+                })
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+    }
+
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.main, menu)
+//        Log.d("teste", "hmmm")
+////        val searchView =
+////            materialAppBar.menu.findItem(R.id.search_menu).actionView as SearchView
+//        val searchView = menu?.findItem(R.id.search_menu)?.actionView as SearchView
+//        searchView.queryHint = "Search for pokemon id or name"
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                Log.d("teste", "submit")
+//                return true
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                TODO("Not yet implemented")
+//            }
+//
+//        }
+//        )
+//
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
     private fun endlessScroll() {
         recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -108,7 +161,7 @@ class PokemonListActivity : AppCompatActivity() {
 
     private fun loadPokemons() {
         viewModel.findAll().observe(this, { pokemonList ->
-            pokemonList.data?.let {list ->
+            pokemonList.data?.let { list ->
                 adapter.update(data = list)
             }
             pokemonList.error?.let {

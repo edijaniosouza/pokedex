@@ -8,6 +8,8 @@ import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 import br.com.edijanio.pokedex.repository.PokemonRepository
 import br.com.edijanio.pokedex.repository.Resource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class PokemonListActivityViewModel(
@@ -27,13 +29,21 @@ class PokemonListActivityViewModel(
         viewModelScope.launch {
 
             val pokemonResource = repository.getPokemonByIdOnApi(pokemonId).value
-            pokemonResource?.let {resource ->
+            pokemonResource?.let { resource ->
                 pokemonLiveData.postValue(resource)
-                resource.data.let {pokemon->
+                resource.data.let { pokemon ->
                     repository.insertPokemonOnDatabase(pokemon)
                 }
             }
         }
         return pokemonLiveData
+    }
+
+    fun getOnPokemonByNameOrId(nameOrId: String?): MutableLiveData<List<PokemonEntity>?> {
+        val liveDataSearch = MutableLiveData<List<PokemonEntity>?>()
+        repository.getPokemonByNameOrId(nameOrId).observeForever{
+            liveDataSearch.value = it
+        }
+        return liveDataSearch
     }
 }

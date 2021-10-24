@@ -28,7 +28,8 @@
         <entry key="..\:/DEV/Pokedex/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.16197916666666667" />
         <entry key="..\:/DEV/pokedex/app/src/main/res/drawable/ic_baseline_favorite_full.xml" value="0.2942708333333333" />
         <entry key="..\:/DEV/pokedex/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2942708333333333" />
-        <entry key="..\:/DEV/pokedex/app/src/main/res/layout-v28/activity_main.xml" value="0.11770833333333333" />
+        <entry key="..\:/DEV/pokedex/app/src/main/res/drawable/ic_search.xml" value="0.2942708333333333" />
+        <entry key="..\:/DEV/pokedex/app/src/main/res/layout-v28/activity_main.xml" value="0.33" />
         <entry key="..\:/DEV/pokedex/app/src/main/res/layout/activity_main.xml" value="0.278125" />
         <entry key="..\:/DEV/pokedex/app/src/main/res/layout/activity_pokemon_details.xml" value="0.278125" />
         <entry key="..\:/DEV/pokedex/app/src/main/res/layout/activity_pokemon_favorite_list.xml" value="0.2640625" />

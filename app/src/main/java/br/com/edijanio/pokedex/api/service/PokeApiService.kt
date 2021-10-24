@@ -9,4 +9,7 @@ interface PokeApiService {
 
     @GET("pokemon/{id}")
     suspend fun getPokemonById(@Path("id") id: Int): Response<Pokemon?>
+
+    @GET("pokemon/{nameOrId}")
+    suspend fun getPokemonByNameOrId(@Path("nameOrId") nameOrId: String): Response<Pokemon?>
 }
