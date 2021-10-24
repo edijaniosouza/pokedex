@@ -1,10 +1,7 @@
 package br.com.edijanio.pokedex.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
 
 @Dao
@@ -19,6 +16,12 @@ interface PokemonDAO {
     @Query("SELECT * FROM pokemonentity WHERE id == :pokemonId")
     fun findById(pokemonId: Int) : LiveData<PokemonEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(pokemon: PokemonEntity)
+
+    @Update
+    suspend fun updatePokemon(pokemon: PokemonEntity)
+
+    @Query("SELECT * FROM pokemonentity WHERE isFavorite == :valor")
+    fun findOnlyFavorites(valor: Boolean): LiveData<List<PokemonEntity>?>
 }

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PokemonListActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.PokemonFavoriteListActivity">
+
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -21,14 +22,14 @@
             android:id="@+id/materialAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
+            app:title="@string/favorites"
             app:titleTextAppearance="@style/appbar_textStyle"
             app:titleTextColor="@color/white"
             style="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
             app:titleCentered="true"
             android:layout_marginBottom="3dp"
             android:elevation="2dp"
-            app:menu="@menu/main"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
             />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -43,6 +44,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBar"
         app:layout_constraintVertical_bias="1.0"
-        tools:listitem="@layout/card_pokemon" />
+        tools:listitem="@layout/card_pokemon"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

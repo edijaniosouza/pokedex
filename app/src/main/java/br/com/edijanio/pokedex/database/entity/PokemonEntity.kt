@@ -18,5 +18,6 @@ data class PokemonEntity (
     val weight : Int,
     val height : Int,
     val name : String,
-    val image : String
+    val image : String,
+    var isFavorite : Boolean = false
 ) : Parcelable

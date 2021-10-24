@@ -6,18 +6,12 @@
         android:id="@+id/search_menu"
         android:title="@string/search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-
-        />
+        app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/filter_menu"
-        android:title="@string/filter"
-        android:icon="@drawable/ic_baseline_filter_alt_24"
+        android:id="@+id/favorite_list"
+        android:title="@string/favorite_list"
+        android:icon="@drawable/ic_baseline_star_24"
         app:showAsAction="always"
         />
-
-
-
 </menu>

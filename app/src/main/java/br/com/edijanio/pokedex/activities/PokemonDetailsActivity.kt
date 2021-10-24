@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.ViewModelProvider
@@ -42,7 +41,28 @@ class PokemonDetailsActivity : AppCompatActivity() {
     private fun config() {
         setSupportActionBar(mab_pokemonDetails)
         pokemonId?.let { fetchData(it) }
+    }
+
+    private fun navigationClickListener() {
         mab_pokemonDetails.setNavigationOnClickListener { finish() }
+    }
+
+    private fun menuClickListener(pokemon: PokemonEntity) {
+        mab_pokemonDetails.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.favorite_empty_menu -> {
+                    viewModel.changeFavorite(pokemon)
+                    true
+                }
+                R.id.favorite_full_menu -> {
+                    viewModel.changeFavorite(pokemon)
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -50,28 +70,41 @@ class PokemonDetailsActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun fetchData(id : Int) {
-
+    private fun fetchData(id: Int) {
         val pokemon = viewModel.getPokemonById(id)
-        pokemon.observe(this, {
-            if(it.data != null){
-                setContent(it.data)
+        pokemon.observe(this, { resource ->
+            if (resource.data != null) {
+                setContent(resource.data)
             }
-            if(it.error != null){
-                //TODO: devolver erro para a main activity
+            if (resource.error != null) {
                 finish()
             }
         })
     }
 
     private fun setContent(pokemon: PokemonEntity?) {
-        pokemon?.let { pokemonModel ->
-            mab_pokemonDetails.title = pokemonModel.name.uppercase()
-            Picasso.get().load(pokemonModel.image).into(iv_pokemon)
 
+        pokemon?.let { pokemonModel ->
+
+            menuClickListener(pokemonModel)
+            navigationClickListener()
+            mab_pokemonDetails.title = pokemonModel.name.uppercase()
+
+            changeFavoriteIcon(pokemonModel)
+            Picasso.get().load(pokemonModel.image).into(iv_pokemon)
             changeBackgroundColor(pokemonModel, tv_typeInfo1, pokemonModel.type1)
             configVisibilityOfTypes(pokemonModel)
             setHeightAndWeightView(pokemonModel)
+        }
+    }
+
+    private fun changeFavoriteIcon(pokemonModel: PokemonEntity) {
+        if (pokemonModel.isFavorite) {
+            mab_pokemonDetails.menu.findItem(R.id.favorite_empty_menu).isVisible = false
+            mab_pokemonDetails.menu.findItem(R.id.favorite_full_menu).isVisible = true
+        } else {
+            mab_pokemonDetails.menu.findItem(R.id.favorite_full_menu).isVisible = false
+            mab_pokemonDetails.menu.findItem(R.id.favorite_empty_menu).isVisible = true
         }
     }
 
@@ -91,7 +124,11 @@ class PokemonDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun changeBackgroundColor(pokemonModel: PokemonEntity, tv_type: TextView, type: String) {
+    private fun changeBackgroundColor(
+        pokemonModel: PokemonEntity,
+        tv_type: TextView,
+        type: String
+    ) {
         tv_type.text = type.uppercase()
         val unwrappedDrawable = tv_type.background
         val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)

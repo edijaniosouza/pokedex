@@ -6,19 +6,18 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.edijanio.pokedex.R
 import br.com.edijanio.pokedex.adapter.RecyclerAdapterMain
 import br.com.edijanio.pokedex.database.AppDatabase
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
-import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 import br.com.edijanio.pokedex.repository.PokemonRepository
 import br.com.edijanio.pokedex.util.POKEMON_CHAVE
 import br.com.edijanio.pokedex.viewmodel.PokemonListActivityViewModel
 import br.com.edijanio.pokedex.viewmodel.factory.PokemonListActivityViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_pokemon_details.*
 
 const val LOAD_ERROR = "Erro ao carregar lista"
 
@@ -44,34 +43,58 @@ class PokemonListActivity : AppCompatActivity() {
     }
 
     private fun startConfiguration() {
-        setSupportActionBar(materialAppBar)
         recycleViewConfigurations()
         loadPokemons()
+        endlessScroll()
+        menuClickListener()
+    }
 
+    private fun menuClickListener() {
+        materialAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.favorite_list -> {
+                    val intent = Intent(this, PokemonFavoriteListActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+    }
+
+    private fun endlessScroll() {
         recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 val lastItem = layoutManager.findLastCompletelyVisibleItemPosition()
                 val listSize = adapter.itemCount
 
-                if(lastItem >= listSize-6){
-                    viewModel.loadMorePokemons(listSize+1).observe(this@PokemonListActivity, {resource ->
-                        resource?.data?.let {pokemon ->
-                            adapter.add(pokemon)
-                        }
-                        resource?.error?.let{
-                            Toast.makeText(this@PokemonListActivity, "Erro ao carregar pokemon",Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                if (lastItem >= listSize - 6) {
+                    loadMorePokemonsViewModel(listSize)
                 }
-
             }
         })
     }
 
+    private fun loadMorePokemonsViewModel(listSize: Int) {
+        viewModel.loadMorePokemons(listSize + 1)
+            .observe(this@PokemonListActivity, { resource ->
+                resource?.data?.let { pokemon ->
+                    adapter.add(pokemon)
+                }
+                resource?.error?.let {
+                    Toast.makeText(
+                        this@PokemonListActivity,
+                        "Erro ao carregar pokemon",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+    }
+
     private fun recycleViewConfigurations() {
-        Log.d("pokemonDetails", "ue1..")
         recycleView_main.layoutManager = layoutManager
         recycleView_main.adapter = adapter
         adapter.onItemClicked = ::openPokemonDetails

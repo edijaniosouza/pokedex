@@ -9,7 +9,7 @@ import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 import java.net.UnknownHostException
 
-private val COMMUNICATION_ERROR = "Erro na comunicação"
+const val COMMUNICATION_ERROR = "Erro na comunicação"
 
 class PokemonRepository(
     private val dao: PokemonDAO,
@@ -52,42 +52,30 @@ class PokemonRepository(
         }
     }
 
-    suspend fun getPokemonById(
+    suspend fun getPokemonByIdOnApi(
         pokemonId: Int
     ): LiveData<Resource<PokemonEntity?>> {
         val liveDataSearch = MutableLiveData<Resource<PokemonEntity?>>()
-
-        val pokemonSearched = getPokemonByIdOnDatabase(pokemonId)
-        if (pokemonSearched.value != null) liveDataSearch.value =
-            Resource(data = pokemonSearched.value)
-        else {
-            try{
-                val pokemonWebSearched = webClient.findPokemonById(pokemonId)
-                if(pokemonWebSearched.isSuccessful){
-                    val pokemonEntity = pokemonWebSearched.let {pokemonResponse ->
-                        pokemonResponse.body()?.let { it1 ->
-                            createPokemonEntity(
-                                it1
-                            )
-                        }
+        try {
+            val pokemonWebSearched = webClient.findPokemonById(pokemonId)
+            if (pokemonWebSearched.isSuccessful) {
+                val pokemonEntity = pokemonWebSearched.let { pokemonResponse ->
+                    pokemonResponse.body()?.let { pokemon ->
+                        createPokemonEntity(pokemon)
                     }
-                    liveDataSearch.value = Resource(data = pokemonEntity)
-                }else{
-                    liveDataSearch.value = Resource(data = null, error = COMMUNICATION_ERROR)
                 }
-            }catch (e: UnknownHostException){
+                liveDataSearch.value = Resource(data = pokemonEntity)
+            } else {
                 liveDataSearch.value = Resource(data = null, error = COMMUNICATION_ERROR)
             }
+
+        } catch (e: UnknownHostException) {
+            liveDataSearch.value = Resource(data = null, error = COMMUNICATION_ERROR)
         }
         return liveDataSearch
     }
 
-    private fun getPokemonByIdOnDatabase(pokemonId: Int): MutableLiveData<PokemonEntity?> {
-        val listLiveData = MutableLiveData<PokemonEntity?>()
-        val requestPokemon = dao.findById(pokemonId)
-        listLiveData.value = requestPokemon.value
-        return listLiveData
-    }
+    fun getPokemonByIdOnDatabase(pokemonId: Int) = dao.findById(pokemonId)
 
     private fun createPokemonEntity(pokemonWebSearched: Pokemon) =
         PokemonEntity(
@@ -99,13 +87,19 @@ class PokemonRepository(
             type2 = if (pokemonWebSearched.types.size > 1) {
                 pokemonWebSearched.types[1].type.name
             } else null,
-            weight = pokemonWebSearched.weight
+            weight = pokemonWebSearched.weight,
         )
 
     suspend fun insertPokemonOnDatabase(pokemon: PokemonEntity?) {
-        if (pokemon != null){
+        if (pokemon != null) {
             dao.insert(pokemon)
         }
     }
 
+    suspend fun changeFavorite(pokemon: PokemonEntity) {
+        pokemon.isFavorite = !pokemon.isFavorite
+        dao.updatePokemon(pokemon)
+    }
+
+    fun getFavoritesPokemons() = dao.findOnlyFavorites(true)
 }

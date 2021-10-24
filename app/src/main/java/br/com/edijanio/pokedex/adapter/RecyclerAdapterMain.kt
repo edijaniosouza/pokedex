@@ -81,7 +81,8 @@ class RecyclerAdapterMain(
                 }
             }
             itemView.pokemon_name.text = pokemon.name.uppercase()
-            Picasso.get().load(pokemon.image)
+            Picasso.get()
+                .load(pokemon.image)
                 .into(itemView.pokemon_image)
 
             val typeName = pokemon.type1
