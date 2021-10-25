@@ -3,6 +3,7 @@ package br.com.edijanio.pokedex.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -39,6 +40,7 @@ class PokemonListActivity : AppCompatActivity() {
         ViewModelProvider(this, factory)
             .get(PokemonListActivityViewModel::class.java)
     }
+    private var isSearching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,62 +75,57 @@ class PokemonListActivity : AppCompatActivity() {
     }
 
     private fun searchEngine() {
-        val searchView = materialAppBar.menu.findItem(R.id.search_menu).actionView as SearchView
+        val menuItem = materialAppBar.menu.findItem(R.id.search_menu)
+        val searchView = menuItem.actionView as SearchView
         searchView.queryHint = "Search for pokemon id or name"
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.getOnPokemonByNameOrId(query).observe(this@PokemonListActivity, {pokemonList ->
-                    Log.d("teste","$pokemonList")
-                    pokemonList?.let {
-                        Log.d("teste","$it")
-                        adapter.update(it)
-                    }
-                })
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                return false
+                adapter.getFilter().filter(newText)
+
+//                viewModel.getOnPokemonByNameOrId(query).observe(this@PokemonListActivity, {pokemonList ->
+//                    pokemonList?.let {
+//                        adapter.update(it)
+//                    }
+//                })
+                return true
             }
         })
+
+        menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                isSearching = true
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                loadPokemons()
+                isSearching = false
+                return true
+            }
+
+        })
+
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.main, menu)
-//        Log.d("teste", "hmmm")
-////        val searchView =
-////            materialAppBar.menu.findItem(R.id.search_menu).actionView as SearchView
-//        val searchView = menu?.findItem(R.id.search_menu)?.actionView as SearchView
-//        searchView.queryHint = "Search for pokemon id or name"
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                Log.d("teste", "submit")
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                TODO("Not yet implemented")
-//            }
-//
-//        }
-//        )
-//
-//        return super.onCreateOptionsMenu(menu)
-//    }
-
     private fun endlessScroll() {
-        recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val lastItem = layoutManager.findLastCompletelyVisibleItemPosition()
-                val listSize = adapter.itemCount
+            recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val lastItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                    val listSize = adapter.itemCount
 
-                if (lastItem >= listSize - 6) {
-                    loadMorePokemonsViewModel(listSize)
+                    if (lastItem >= listSize - 6 && !isSearching) {
+                        Log.d("teste","carregando pokemons onScroll")
+                        loadMorePokemonsViewModel(listSize)
+                    }
                 }
-            }
-        })
+            })
+
     }
 
     private fun loadMorePokemonsViewModel(listSize: Int) {
@@ -161,12 +158,12 @@ class PokemonListActivity : AppCompatActivity() {
 
     private fun loadPokemons() {
         viewModel.findAll().observe(this, { pokemonList ->
-            pokemonList.data?.let { list ->
+            pokemonList?.let { list ->
                 adapter.update(data = list)
             }
-            pokemonList.error?.let {
-                Toast.makeText(this, LOAD_ERROR, Toast.LENGTH_SHORT).show()
-            }
+//            pokemonList?.let {
+//                Toast.makeText(this, LOAD_ERROR, Toast.LENGTH_SHORT).show()
+//            }
         })
     }
 

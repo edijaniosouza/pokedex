@@ -1,25 +1,21 @@
 package br.com.edijanio.pokedex.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
-import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
 import br.com.edijanio.pokedex.repository.PokemonRepository
 import br.com.edijanio.pokedex.repository.Resource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class PokemonListActivityViewModel(
     private val repository: PokemonRepository
 ) : ViewModel() {
-    private val pokemonsLiveData = MutableLiveData<Resource<List<PokemonEntity>?>>()
+    private val pokemonsLiveData = MediatorLiveData<List<PokemonEntity>?>()
 
-    fun findAll(): LiveData<Resource<List<PokemonEntity>?>> {
+    fun findAll(): LiveData<List<PokemonEntity>?> {
         viewModelScope.launch {
-            pokemonsLiveData.postValue(Resource(data = repository.findAll().value))
+            pokemonsLiveData.addSource(repository.findAll()) {
+                pokemonsLiveData.value = it
+            }
         }
         return pokemonsLiveData
     }
@@ -41,8 +37,8 @@ class PokemonListActivityViewModel(
 
     fun getOnPokemonByNameOrId(nameOrId: String?): MutableLiveData<List<PokemonEntity>?> {
         val liveDataSearch = MutableLiveData<List<PokemonEntity>?>()
-        repository.getPokemonByNameOrId(nameOrId).observeForever{
-            liveDataSearch.value = it
+        viewModelScope.launch {
+           liveDataSearch.postValue( repository.getPokemonByNameOrId(nameOrId).value)
         }
         return liveDataSearch
     }

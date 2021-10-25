@@ -39,7 +39,6 @@ class PokemonDetailsActivity : AppCompatActivity() {
     }
 
     private fun config() {
-        setSupportActionBar(mab_pokemonDetails)
         pokemonId?.let { fetchData(it) }
     }
 
@@ -65,11 +64,6 @@ class PokemonDetailsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.pokemon_details, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
     private fun fetchData(id: Int) {
         val pokemon = viewModel.getPokemonById(id)
         pokemon.observe(this, { resource ->
@@ -92,40 +86,41 @@ class PokemonDetailsActivity : AppCompatActivity() {
 
             changeFavoriteIcon(pokemonModel)
             Picasso.get().load(pokemonModel.image).into(iv_pokemon)
-            changeBackgroundColor(pokemonModel, tv_typeInfo1, pokemonModel.type1)
+            changeBackgroundColor(tv_typeInfo1, pokemonModel.type1)
             configVisibilityOfTypes(pokemonModel)
             setHeightAndWeightView(pokemonModel)
         }
     }
 
     private fun changeFavoriteIcon(pokemonModel: PokemonEntity) {
+        val emptyMenuPokemon = mab_pokemonDetails.menu.findItem(R.id.favorite_empty_menu)
+        val fullMenuPokemon = mab_pokemonDetails.menu.findItem(R.id.favorite_full_menu)
         if (pokemonModel.isFavorite) {
-            mab_pokemonDetails.menu.findItem(R.id.favorite_empty_menu).isVisible = false
-            mab_pokemonDetails.menu.findItem(R.id.favorite_full_menu).isVisible = true
+            emptyMenuPokemon.isVisible = false
+            fullMenuPokemon.isVisible = true
         } else {
-            mab_pokemonDetails.menu.findItem(R.id.favorite_full_menu).isVisible = false
-            mab_pokemonDetails.menu.findItem(R.id.favorite_empty_menu).isVisible = true
+            emptyMenuPokemon.isVisible = true
+            fullMenuPokemon.isVisible = false
         }
     }
 
     private fun setHeightAndWeightView(pokemonModel: PokemonEntity) {
         val heightValue = pokemonModel.height.toFloat().let { it1 -> convertValues(it1) }
         val weightValue = pokemonModel.weight.toFloat().let { it1 -> convertValues(it1) }
-        tv_heightInfo.text = "$heightValue m"
-        tv_weightInfo.text = "$weightValue Kg"
+        "$heightValue m".also { tv_heightInfo.text = it }
+        "$weightValue Kg".also { tv_weightInfo.text = it }
     }
 
     private fun configVisibilityOfTypes(pokemonModel: PokemonEntity) {
         if (pokemonModel.type2 != null) {
             tv_typeInfo2.visibility = VISIBLE
-            changeBackgroundColor(pokemonModel, tv_typeInfo2, pokemonModel.type2)
+            changeBackgroundColor(tv_typeInfo2, pokemonModel.type2)
         } else {
             tv_typeInfo2.visibility = GONE
         }
     }
 
     private fun changeBackgroundColor(
-        pokemonModel: PokemonEntity,
         tv_type: TextView,
         type: String
     ) {

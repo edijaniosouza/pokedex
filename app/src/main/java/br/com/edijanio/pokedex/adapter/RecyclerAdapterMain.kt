@@ -1,20 +1,17 @@
 package br.com.edijanio.pokedex.adapter
 
 import android.content.Context
-import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.startActivity
+import android.widget.Filter
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.edijanio.pokedex.R
-import br.com.edijanio.pokedex.activities.PokemonDetailsActivity
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
-import br.com.edijanio.pokedex.model.pokemonInformation.Pokemon
-import br.com.edijanio.pokedex.util.POKEMON_CHAVE
 import br.com.edijanio.pokedex.util.changeTypeColor
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_pokemon.view.*
@@ -25,6 +22,7 @@ class RecyclerAdapterMain(
     var onItemClicked: (pokemon: PokemonEntity) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerAdapterMain.ViewHolder>() {
 
+    private val fullPokemonList = mutableListOf<PokemonEntity>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val createdView = LayoutInflater.from(context)
@@ -40,28 +38,60 @@ class RecyclerAdapterMain(
     }
 
     fun update(data: List<PokemonEntity>) {
-        notifyItemRangeRemoved(0,pokemonsList.size)
-        this.pokemonsList.clear()
-        this.pokemonsList.addAll(data)
-        notifyItemRangeInserted(0,pokemonsList.size)
+        data.forEach {
+            if (!pokemonsList.contains(it)) {
+                pokemonsList.add(it)
+                fullPokemonList.add(it)
+                notifyItemInserted(pokemonsList.size)
+            }
+        }
+    }
+
+    fun getFilter(): Filter = searchedFilter
+
+    private val searchedFilter = object : Filter() {
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            val filteredList: MutableList<PokemonEntity> = mutableListOf()
+            if (constraint == null || constraint.isEmpty()) {
+                filteredList.addAll(fullPokemonList)
+            } else {
+                val filterPattern = constraint.toString().lowercase().trim()
+                for (item in fullPokemonList) {
+
+                    if (item.name.lowercase().contains(filterPattern)) {
+                        filteredList.add(item)
+                    }
+
+                }
+            }
+            val results = FilterResults()
+            results.values = filteredList
+            return results
+        }
+
+        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            pokemonsList.clear()
+            pokemonsList.addAll(results?.values as MutableList<PokemonEntity>)
+            notifyDataSetChanged()
+        }
     }
 
     fun add(pokemon: PokemonEntity) {
         val position = itemCount
 
-        if(!pokemonsList.contains(pokemon)){
+        if (!pokemonsList.contains(pokemon)) {
             pokemonsList.add(position, pokemon)
             notifyItemInserted(position)
         }
     }
 
 
-    inner class ViewHolder(itemView : View) :
-        RecyclerView.ViewHolder(itemView){
-        private lateinit var pokemon : PokemonEntity
+    inner class ViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
+        private lateinit var pokemon: PokemonEntity
 
-        init{
-            itemView.setOnClickListener{
+        init {
+            itemView.setOnClickListener {
                 if (::pokemon.isInitialized) {
                     onItemClicked(pokemon)
                 }
@@ -71,11 +101,12 @@ class RecyclerAdapterMain(
         fun linkPokemonDetails(
             pokemon: PokemonEntity
         ) {
-            this.pokemon =pokemon
+            this.pokemon = pokemon
             when {
                 pokemon.id < 10 -> {
                     "#00${pokemon.id}".also {
-                        itemView.tv_pokemonID.text = it }
+                        itemView.tv_pokemonID.text = it
+                    }
                 }
                 pokemon.id < 100 -> {
                     "#0${pokemon.id}".also { itemView.tv_pokemonID.text = it }

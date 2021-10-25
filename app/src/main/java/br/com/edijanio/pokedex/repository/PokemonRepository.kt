@@ -20,14 +20,10 @@ class PokemonRepository(
     private val dao: PokemonDAO,
     private val webClient: PokemonWebClient = PokemonWebClient()
 ) {
-    private val liveData = MutableLiveData<List<PokemonEntity>?>()
 
     suspend fun findAll(): LiveData<List<PokemonEntity>?> {
-        getAllPokemonsOnDatabase().observeForever {
-            liveData.value = it
-        }
         findOnAPI()
-        return liveData
+        return getAllPokemonsOnDatabase()
     }
 
     private fun getAllPokemonsOnDatabase(): LiveData<List<PokemonEntity>?> = dao.findAll()
@@ -108,31 +104,19 @@ class PokemonRepository(
 
     fun getFavoritesPokemons() = dao.findOnlyFavorites(true)
 
-    fun getPokemonByNameOrId(nameOrId: String?): MutableLiveData<List<PokemonEntity>?> {
+    suspend fun getPokemonByNameOrId(nameOrId: String?): MutableLiveData<List<PokemonEntity>?> {
         val liveDataSearch = MutableLiveData<List<PokemonEntity>?>()
         if (nameOrId != null) {
-            if (nameOrId.toIntOrNull() != null) {
-                dao.findById(nameOrId.toInt()).observeForever { pokemon ->
-                    liveDataSearch.value = listOf(pokemon)
-                }
-            } else {
-                dao.findByName(nameOrId).observeForever { pokemonList ->
-                    liveDataSearch.value = pokemonList
-                }
-            }
             try {
-                CoroutineScope(IO).launch {
-                    val apiResponse = webClient.findPokemonByIdOrName(nameOrId)
-                    if (apiResponse.isSuccessful) {
-                        val createPokemonEntity = apiResponse.body()?.let { createPokemonEntity(it) }
-                        createPokemonEntity?.let {pokemonEntity ->
-                            withContext(Main){
-                                liveDataSearch.value = listOf(pokemonEntity)
-                            }
-                        }
+                val apiResponse = webClient.findPokemonByIdOrName(nameOrId)
+                if (apiResponse.isSuccessful) {
+                    val createPokemonEntity = apiResponse.body()?.let { createPokemonEntity(it) }
+                    createPokemonEntity?.let { pokemonEntity ->
+                        liveDataSearch.value = listOf(pokemonEntity)
                     }
                 }
-            }catch (e: UnknownHostException){
+
+            } catch (e: UnknownHostException) {
                 //TODO: Implementar tratamento
             }
         }

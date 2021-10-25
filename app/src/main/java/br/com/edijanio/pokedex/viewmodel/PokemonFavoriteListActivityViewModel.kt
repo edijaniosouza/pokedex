@@ -1,5 +1,6 @@
 package br.com.edijanio.pokedex.viewmodel
 
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
@@ -10,10 +11,11 @@ class PokemonFavoriteListActivityViewModel(
     private val repository: PokemonRepository
 ) : ViewModel() {
 
-    private val pokemonsLiveData = MutableLiveData<List<PokemonEntity>?>()
+    private val pokemonsLiveData = MediatorLiveData<List<PokemonEntity>?>()
 
     fun loadOnlyFavorites(): MutableLiveData<List<PokemonEntity>?> {
-        repository.getFavoritesPokemons().observeForever{
+
+        pokemonsLiveData.addSource(repository.getFavoritesPokemons()){
             pokemonsLiveData.value = it
         }
         return pokemonsLiveData

@@ -58,7 +58,7 @@ class PokemonFavoriteListActivity : AppCompatActivity() {
     private fun loadFavorites() {
         viewModel.loadOnlyFavorites().observe(this, {listPokemons ->
             listPokemons?.let{
-                adapter.update(listPokemons)
+                adapter.update(it)
             }
         })
     }

@@ -5,12 +5,14 @@
         android:id="@+id/favorite_empty_menu"
         android:icon="@drawable/ic_baseline_favorite_border_24"
         android:title="@string/favorite"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        />
 
     <item
         android:id="@+id/favorite_full_menu"
         android:icon="@drawable/ic_baseline_favorite_full"
         android:title="@string/favorite"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
 
 </menu>

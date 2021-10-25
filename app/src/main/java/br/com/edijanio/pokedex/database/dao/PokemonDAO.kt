@@ -25,6 +25,6 @@ interface PokemonDAO {
     @Query("SELECT * FROM pokemonentity WHERE isFavorite == :valor")
     fun findOnlyFavorites(valor: Boolean): LiveData<List<PokemonEntity>?>
 
-    @Query("SELECT * FROM pokemonentity WHERE name LIKE :name")
+    @Query("SELECT * FROM pokemonentity WHERE name == :name")
     fun findByName(name: String) : LiveData<List<PokemonEntity>?>
 }
