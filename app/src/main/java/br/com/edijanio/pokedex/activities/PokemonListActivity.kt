@@ -86,7 +86,7 @@ class PokemonListActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (adapter.itemCount <= 1) {
+                if (adapter.itemCount == 0) {
                     viewModel.getOnPokemonByNameOrId(newText)
                         .observe(this@PokemonListActivity, { pokemonList ->
                             handleUpdateAdapter(pokemonList)
@@ -121,7 +121,6 @@ class PokemonListActivity : AppCompatActivity() {
                 val listSize = adapter.itemCount
 
                 if (lastItem >= listSize - 6 && !isSearching) {
-                    Log.d("teste", "carregando pokemons onScroll")
                     loadMorePokemonsViewModel(listSize)
                 }
             }
@@ -159,7 +158,6 @@ class PokemonListActivity : AppCompatActivity() {
 
     private fun loadPokemons() {
         viewModel.findAll().observe(this, { pokemonList ->
-            Log.d("teste", "$pokemonList")
             handleUpdateAdapter(pokemonList)
         })
     }

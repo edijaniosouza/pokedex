@@ -40,8 +40,10 @@ class RecyclerAdapterMain(
         data.forEach {
             if (!pokemonsList.contains(it)) {
                 pokemonsList.add(it)
-                fullPokemonList.add(it)
                 notifyItemInserted(pokemonsList.size)
+            }
+            if(!fullPokemonList.contains(it)){
+                fullPokemonList.add(it)
             }
         }
     }
@@ -71,10 +73,9 @@ class RecyclerAdapterMain(
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            notifyItemRangeRemoved(0, pokemonsList.size)
             pokemonsList.clear()
-            pokemonsList.addAll(results?.values as MutableList<PokemonEntity>)
-            notifyItemRangeInserted(0, pokemonsList.size)
+            pokemonsList.addAll(results?.values as List<PokemonEntity>)
+            notifyDataSetChanged()
         }
     }
 

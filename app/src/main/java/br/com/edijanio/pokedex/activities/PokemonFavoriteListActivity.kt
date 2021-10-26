@@ -2,6 +2,7 @@ package br.com.edijanio.pokedex.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,11 @@ class PokemonFavoriteListActivity : AppCompatActivity() {
         materialAppBar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadFavorites()
     }
 
     private fun startConfig() {

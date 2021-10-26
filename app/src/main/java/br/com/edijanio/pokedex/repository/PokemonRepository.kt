@@ -122,7 +122,10 @@ class PokemonRepository(
                         val pokemonEntity = createPokemonEntity(responseBody)
                         liveDataSearch.value = Resource(data = listOf(pokemonEntity))
                     }
-                }else{
+                } else if(apiResponse.code() == 404){
+                    liveDataSearch.value = Resource(data = null, error = "Pokemon não encontrado")
+                }
+                else{
                     liveDataSearch.value = Resource(data = null, error = COMMUNICATION_ERROR)
                 }
 
