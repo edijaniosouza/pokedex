@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
@@ -15,9 +14,11 @@ import br.com.edijanio.pokedex.adapter.RecyclerAdapterMain
 import br.com.edijanio.pokedex.database.AppDatabase
 import br.com.edijanio.pokedex.database.entity.PokemonEntity
 import br.com.edijanio.pokedex.repository.PokemonRepository
+import br.com.edijanio.pokedex.repository.Resource
 import br.com.edijanio.pokedex.util.POKEMON_CHAVE
 import br.com.edijanio.pokedex.viewmodel.PokemonListActivityViewModel
 import br.com.edijanio.pokedex.viewmodel.factory.PokemonListActivityViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.materialAppBar
 import kotlinx.android.synthetic.main.activity_main.recycleView_main
@@ -85,13 +86,13 @@ class PokemonListActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (adapter.itemCount <= 1) {
+                    viewModel.getOnPokemonByNameOrId(newText)
+                        .observe(this@PokemonListActivity, { pokemonList ->
+                            handleUpdateAdapter(pokemonList)
+                        })
+                }
                 adapter.getFilter().filter(newText)
-
-//                viewModel.getOnPokemonByNameOrId(query).observe(this@PokemonListActivity, {pokemonList ->
-//                    pokemonList?.let {
-//                        adapter.update(it)
-//                    }
-//                })
                 return true
             }
         })
@@ -113,18 +114,18 @@ class PokemonListActivity : AppCompatActivity() {
     }
 
     private fun endlessScroll() {
-            recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    val lastItem = layoutManager.findLastCompletelyVisibleItemPosition()
-                    val listSize = adapter.itemCount
+        recycleView_main.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val lastItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                val listSize = adapter.itemCount
 
-                    if (lastItem >= listSize - 6 && !isSearching) {
-                        Log.d("teste","carregando pokemons onScroll")
-                        loadMorePokemonsViewModel(listSize)
-                    }
+                if (lastItem >= listSize - 6 && !isSearching) {
+                    Log.d("teste", "carregando pokemons onScroll")
+                    loadMorePokemonsViewModel(listSize)
                 }
-            })
+            }
+        })
 
     }
 
@@ -135,11 +136,11 @@ class PokemonListActivity : AppCompatActivity() {
                     adapter.add(pokemon)
                 }
                 resource?.error?.let {
-                    Toast.makeText(
-                        this@PokemonListActivity,
-                        "Erro ao carregar pokemon",
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        this@PokemonListActivity,
+//                        "Erro ao carregar pokemon",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                 }
             })
     }
@@ -158,13 +159,19 @@ class PokemonListActivity : AppCompatActivity() {
 
     private fun loadPokemons() {
         viewModel.findAll().observe(this, { pokemonList ->
-            pokemonList?.let { list ->
-                adapter.update(data = list)
-            }
-//            pokemonList?.let {
-//                Toast.makeText(this, LOAD_ERROR, Toast.LENGTH_SHORT).show()
-//            }
+            Log.d("teste", "$pokemonList")
+            handleUpdateAdapter(pokemonList)
         })
+    }
+
+    private fun handleUpdateAdapter(pokemonList: Resource<List<PokemonEntity>?>) {
+        if (!pokemonList.data.isNullOrEmpty()) {
+            adapter.update(data = pokemonList.data)
+        } else if (!pokemonList.error.isNullOrEmpty()) {
+            Snackbar.make(recycleView_main, pokemonList.error, Snackbar.LENGTH_LONG).show()
+        } else {
+            Snackbar.make(recycleView_main, LOAD_ERROR, Snackbar.LENGTH_LONG).show()
+        }
     }
 
 

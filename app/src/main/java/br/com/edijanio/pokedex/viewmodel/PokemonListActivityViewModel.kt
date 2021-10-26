@@ -9,15 +9,8 @@ import kotlinx.coroutines.launch
 class PokemonListActivityViewModel(
     private val repository: PokemonRepository
 ) : ViewModel() {
-    private val pokemonsLiveData = MediatorLiveData<List<PokemonEntity>?>()
-
-    fun findAll(): LiveData<List<PokemonEntity>?> {
-        viewModelScope.launch {
-            pokemonsLiveData.addSource(repository.findAll()) {
-                pokemonsLiveData.value = it
-            }
-        }
-        return pokemonsLiveData
+    fun findAll(): LiveData<Resource<List<PokemonEntity>?>> {
+        return repository.findAll()
     }
 
     fun loadMorePokemons(pokemonId: Int): LiveData<Resource<PokemonEntity?>> {
@@ -35,10 +28,10 @@ class PokemonListActivityViewModel(
         return pokemonLiveData
     }
 
-    fun getOnPokemonByNameOrId(nameOrId: String?): MutableLiveData<List<PokemonEntity>?> {
-        val liveDataSearch = MutableLiveData<List<PokemonEntity>?>()
+    fun getOnPokemonByNameOrId(nameOrId: String?): MutableLiveData<Resource<List<PokemonEntity>?>> {
+        val liveDataSearch = MutableLiveData<Resource<List<PokemonEntity>?>>()
         viewModelScope.launch {
-           liveDataSearch.postValue( repository.getPokemonByNameOrId(nameOrId).value)
+            liveDataSearch.postValue(repository.getPokemonByNameOrId(nameOrId).value)
         }
         return liveDataSearch
     }

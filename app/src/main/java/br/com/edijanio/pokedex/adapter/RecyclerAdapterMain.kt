@@ -1,7 +1,6 @@
 package br.com.edijanio.pokedex.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -61,7 +60,9 @@ class RecyclerAdapterMain(
                     if (item.name.lowercase().contains(filterPattern)) {
                         filteredList.add(item)
                     }
-
+                    if(item.id.toString().contains(filterPattern)){
+                        filteredList.add(item)
+                    }
                 }
             }
             val results = FilterResults()
@@ -70,9 +71,10 @@ class RecyclerAdapterMain(
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            notifyItemRangeRemoved(0, pokemonsList.size)
             pokemonsList.clear()
             pokemonsList.addAll(results?.values as MutableList<PokemonEntity>)
-            notifyDataSetChanged()
+            notifyItemRangeInserted(0, pokemonsList.size)
         }
     }
 
@@ -118,6 +120,7 @@ class RecyclerAdapterMain(
             itemView.pokemon_name.text = pokemon.name.uppercase()
             Picasso.get()
                 .load(pokemon.image)
+                .error(R.drawable.who_is_the_pokemon)
                 .into(itemView.pokemon_image)
 
             val typeName = pokemon.type1
