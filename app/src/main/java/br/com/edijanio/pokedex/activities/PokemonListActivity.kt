@@ -129,17 +129,13 @@ class PokemonListActivity : AppCompatActivity() {
     }
 
     private fun loadMorePokemonsViewModel(listSize: Int) {
-        viewModel.loadMorePokemons(listSize + 1)
+        viewModel.loadMorePokemons(listSize + 2)
             .observe(this@PokemonListActivity, { resource ->
                 resource?.data?.let { pokemon ->
                     adapter.add(pokemon)
                 }
                 resource?.error?.let {
-//                    Toast.makeText(
-//                        this@PokemonListActivity,
-//                        "Erro ao carregar pokemon",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
+                    Snackbar.make(recycleView_main, LOAD_ERROR, Snackbar.LENGTH_LONG).show()
                 }
             })
     }
